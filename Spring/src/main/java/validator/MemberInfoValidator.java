@@ -35,6 +35,8 @@ public class MemberInfoValidator implements Validator{
 		}
 		
 		if(address != null) {
+			
+			//address 경로 설정 address.zipcode, addres.address1 로 접근해야하지만 여기서 설정해주었기 때문에 아래는 addres 제외하고 변수로 바로 접근
 			errors.pushNestedPath("address");
 			try {
 				if(address.getZipcode() == null || address.getZipcode().isBlank()) {

@@ -20,11 +20,15 @@ import validator.LoginCommandValidator;
 @RequestMapping("/login/login.do")
 public class LoginController {
 
+	
+	//forward, redirect 경로 변수로 선언...
 	private String formViewName = "login/form";
 
 	@Autowired
 	private Authenticator authenticator;
 
+	
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String form() {
 		return formViewName;
