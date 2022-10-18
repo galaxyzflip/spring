@@ -30,13 +30,6 @@
 	
 	<bean class="controller.GameInfoController"/>
 	
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-		<property name="alwaysUseFullPath" value="true" />
-	</bean>
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<property name="alwaysUseFullPath" value="true" />		
-	</bean>
-	
 	<bean class="controller.CharacterInfoController"/>
 	
 	<bean id="authenticator" class="service.MockAuthenticator" p:commonLogger-ref="commonLogger"/>
@@ -44,6 +37,24 @@
 	<bean class="controller.LoginController">
 		<property name="authenticator" ref="authenticator"/>
 	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
+	
+	<bean class="controller.ReportSubmissionController"/>
+	
+	<bean class="controller.QueryLogController"/>
+	
+	<bean id="eventExpirationCheckInterceptor" class="interceptor.EventExpirationCheckInterceptor"/>
+	
+	<bean class="controller.EventController"/>
+	
+	<bean class="controller.ArithmeticOperatorController"/>
+	
+	<bean class="controller.SimpleConverterController"/>
+	
+	<bean class="controller.GuestMessageController"/>
+	
+	
 	
 	
 
@@ -65,6 +76,74 @@
 	
 	
 	
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="alwaysUseFullPath" value="true" />
+		
+		<property name="interceptors">
+			<list>
+				<ref bean="eventExpirationCheckInterceptor"/>
+			</list>
+		</property>
+		
+	</bean>
+	
+	
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="cacheSeconds" value="0" />
+			<property name="alwaysUseFullPath" value="true" />
+		<!-- 	<property name="webBindingInitializer">
+				<bean class="madvirus.spring.chap06.binder.CustomWebBindingInitializer" />
+			</property> -->
+			<property name="messageConverters">
+				<list>
+					<ref bean="byteArrayHttpMessageConverter" />
+					<ref bean="stringHttpMessageConverter" />
+					<ref bean="formHttpMessageConverter" />
+					<ref bean="sourceHttpMessageConverter" />
+					<ref bean="marshallingHttpMessageConverter" />
+					<ref bean="jsonHttpMessageConverter" />
+				</list>
+			</property>
+	</bean>
+	
+	
+	
+	
+	<bean id="byteArrayHttpMessageConverter"
+		class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+	<bean id="stringHttpMessageConverter"
+		class="org.springframework.http.converter.StringHttpMessageConverter" />
+	<bean id="formHttpMessageConverter"
+		class="org.springframework.http.converter.FormHttpMessageConverter" />
+	<bean id="sourceHttpMessageConverter"
+		class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+	<bean id="marshallingHttpMessageConverter"
+		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<property name="marshaller" ref="jaxb2Marshaller" />
+		<property name="unmarshaller" ref="jaxb2Marshaller" />
+	</bean>
+	
+	
+	<bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="classesToBeBound">
+			<list>
+				<value>model.GuestMessageList</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+	
+	
+	
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.ArithmeticException">event/mathException</prop>
+				<prop key="java.lang.Exception">event/exception</prop>
+			</props>
+		</property>
+	</bean>
 	
 	
 	
